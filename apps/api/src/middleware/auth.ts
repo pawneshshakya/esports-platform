@@ -17,7 +17,7 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
       return res.status(401).json({ error: 'No authentication token' });
     }
 
-    const decoded = jwt.verify(token, config.JWT_ACCESS_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, config.JWT_ACCESS_SECRET!) as any;
     const user = await User.findById(decoded.userId)
       .select('-password -wallet.profilePassword -wallet.transactionPin');
 

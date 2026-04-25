@@ -69,7 +69,7 @@ export const respondFriendRequest = async (req: AuthRequest, res: Response) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const request = user.friendRequests?.id(requestId);
+    const request = (user.friendRequests as any).id(requestId);
     if (!request) return res.status(404).json({ error: 'Request not found' });
 
     request.status = action;
@@ -95,7 +95,7 @@ export const getFriends = async (req: AuthRequest, res: Response) => {
     const user = await User.findById(req.user!._id)
       .populate('friends', 'name username avatar wallet.accountNumber gamingIds')
       .populate('friendRequests.from', 'name username avatar');
-    
+
     res.json({
       friends: user?.friends || [],
       requests: user?.friendRequests?.filter(r => r.status === 'pending') || []
@@ -119,8 +119,8 @@ export const searchUsers = async (req: AuthRequest, res: Response) => {
       ],
       _id: { $ne: req.user!._id }
     })
-    .select('name username avatar gamingIds')
-    .limit(10);
+      .select('name username avatar gamingIds')
+      .limit(10);
 
     res.json({ users });
   } catch (error: any) {

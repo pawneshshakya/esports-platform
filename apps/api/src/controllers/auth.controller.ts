@@ -12,12 +12,12 @@ import { validationResult } from "express-validator";
 const generateTokens = (userId: string) => {
   const accessToken = jwt.sign(
     { userId, type: "access" },
-    config.JWT_ACCESS_SECRET,
+    config.JWT_ACCESS_SECRET!,
     { expiresIn: "15m" },
   );
   const refreshToken = jwt.sign(
     { userId, type: "refresh" },
-    config.JWT_REFRESH_SECRET,
+    config.JWT_REFRESH_SECRET!,
     { expiresIn: "7d" },
   );
   return { accessToken, refreshToken };
@@ -32,7 +32,8 @@ export const register = async (req: Request, res: Response) => {
       return;
     }
 
-    const { email, password, name, phone } = req.body;
+    const { email: rawEmail, password, name, phone, username } = req.body;
+    const email = rawEmail?.toLowerCase();
 
     // Validate Gmail only
     if (!email.endsWith("@gmail.com")) {
@@ -66,16 +67,12 @@ export const register = async (req: Request, res: Response) => {
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const walletAccount = `ES${Date.now()}${Math.floor(Math.random() * 10000)}`;
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     // Create user
     const user = new User({
       email,
-      password: hashedPassword,
+      password, // Pass plain password, model hook will hash it
       name,
-      username,
+      username: username || email.split("@")[0],
       emailVerificationToken: verificationToken,
       emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
       wallet: {
@@ -176,7 +173,8 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const { email, password } = req.body;
+    const { email: rawEmail, password } = req.body;
+    const email = rawEmail?.toLowerCase();
 
     // Validate input
     if (!email || !password) {
@@ -187,6 +185,7 @@ export const login = async (req: Request, res: Response) => {
     // Find user
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
+      console.log(`🔍 Login failed: User not found (${email})`);
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
@@ -208,6 +207,7 @@ export const login = async (req: Request, res: Response) => {
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      console.log(`❌ Login failed: Password mismatch for ${email}`);
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
@@ -243,7 +243,7 @@ export const login = async (req: Request, res: Response) => {
 export const refreshToken = async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body;
-    const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET) as {
+    const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET!) as {
       userId: string;
     };
 
@@ -252,7 +252,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 
     const newAccessToken = jwt.sign(
       { userId: user._id },
-      config.JWT_ACCESS_SECRET,
+      config.JWT_ACCESS_SECRET!,
       { expiresIn: "15m" },
     );
 

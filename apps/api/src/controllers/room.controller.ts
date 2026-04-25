@@ -204,7 +204,8 @@ const resolveRoomWithStats = async (roomId: string, winnerId: string, method: st
       ...room.mediatorReview,
       result: 'win',
       winner: winnerId as any,
-      notes: `Resolved via ${method}`
+      notes: `Resolved via ${method}`,
+      screenshotVerified: room.mediatorReview?.screenshotVerified || false
     };
 
     // Calculate prizes from event
@@ -213,7 +214,7 @@ const resolveRoomWithStats = async (roomId: string, winnerId: string, method: st
       // Simple: Winner gets 1st prize
       const firstPrize = event.prizePool.breakdown.find(b => b.position === 1);
       if (firstPrize) {
-        winners.push({ userId: winnerId, position: 1, prize: firstPrize.amount });
+        winners.push({ userId: winnerId as any, position: 1, prize: firstPrize.amount });
 
         // Credit winner
         const winner = await User.findById(winnerId).session(session);

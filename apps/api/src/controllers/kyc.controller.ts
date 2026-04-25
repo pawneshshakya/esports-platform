@@ -22,9 +22,9 @@ export const submitKYC = async (req: AuthRequest, res: Response) => {
         user: userId,
         documentType,
         documentNumber,
-        frontImage: req.files?.['front'] ? `/uploads/kyc/${req.files['front'][0].filename}` : existing?.frontImage,
-        backImage: req.files?.['back'] ? `/uploads/kyc/${req.files['back'][0].filename}` : existing?.backImage,
-        selfieImage: req.files?.['selfie'] ? `/uploads/kyc/${req.files['selfie'][0].filename}` : existing?.selfieImage,
+        frontImage: (req.files as any)?.['front'] ? `/uploads/kyc/${(req.files as any)['front'][0].filename}` : existing?.frontImage,
+        backImage: (req.files as any)?.['back'] ? `/uploads/kyc/${(req.files as any)['back'][0].filename}` : existing?.backImage,
+        selfieImage: (req.files as any)?.['selfie'] ? `/uploads/kyc/${(req.files as any)['selfie'][0].filename}` : existing?.selfieImage,
         status: 'pending'
       },
       { upsert: true, new: true }
@@ -69,7 +69,7 @@ export const reviewKYC = async (req: AuthRequest, res: Response) => {
     kyc.adminNotes = notes;
     await kyc.save();
 
-    await User.findByIdAndUpdate(kyc.user, { 
+    await User.findByIdAndUpdate(kyc.user, {
       kycStatus: status,
       // If approved, mark for withdrawals
       isKYCApproved: status === 'approved'

@@ -6,7 +6,11 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-export const TransferForm = () => {
+interface Props {
+  onSuccess?: () => void;
+}
+
+export const TransferForm = ({ onSuccess }: Props) => {
   const [receiverAccount, setReceiverAccount] = useState('');
   const [amount, setAmount] = useState('');
   const [profilePassword, setProfilePassword] = useState('');
@@ -41,6 +45,7 @@ export const TransferForm = () => {
         setAmount('');
         setProfilePassword('');
         setTransactionPin('');
+        onSuccess?.();
       } else {
         toast.error(data.error || 'Transfer failed');
       }
@@ -50,7 +55,7 @@ export const TransferForm = () => {
   return (
     <div className="bg-card p-6 rounded-2xl border border-border">
       <h3 className="text-xl font-bold text-white mb-4">Transfer Tokens</h3>
-      
+
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-muted-foreground mb-1">Receiver Wallet ID</label>

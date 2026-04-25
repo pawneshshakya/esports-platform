@@ -44,6 +44,14 @@ export interface IRoom extends Document {
     }>;
     distributed: boolean;
   };
+  room?: {
+    game: string;
+    gameMode: string;
+    map: string;
+    maxPlayers: number;
+    password?: string;
+    isDirect: boolean;
+  };
 }
 
 const RoomSchema = new Schema<IRoom>(
@@ -56,22 +64,22 @@ const RoomSchema = new Schema<IRoom>(
       gamingId: { type: String, required: true },
       teamNumber: Number,
       joinedAt: { type: Date, default: Date.now },
-      status: { 
-        type: String, 
-        enum: ['joined', 'ready', 'playing', 'finished'], 
-        default: 'joined' 
+      status: {
+        type: String,
+        enum: ['joined', 'ready', 'playing', 'finished'],
+        default: 'joined'
       }
     }],
     mediator: { type: Schema.Types.ObjectId, ref: 'User' },
-    mediatorStatus: { 
-      type: String, 
-      enum: ['assigned', 'accepted', 'reviewing', 'completed'], 
-      default: 'assigned' 
+    mediatorStatus: {
+      type: String,
+      enum: ['assigned', 'accepted', 'reviewing', 'completed'],
+      default: 'assigned'
     },
-    status: { 
-      type: String, 
-      enum: ['waiting', 'ongoing', 'screenshot_upload', 'voting', 'mediator_review', 'completed', 'disputed'], 
-      default: 'waiting' 
+    status: {
+      type: String,
+      enum: ['waiting', 'ongoing', 'screenshot_upload', 'voting', 'mediator_review', 'completed', 'disputed'],
+      default: 'waiting'
     },
     startedAt: Date,
     endedAt: Date,
@@ -87,10 +95,10 @@ const RoomSchema = new Schema<IRoom>(
       }]
     }],
     votingDeadline: Date,
-    votingStatus: { 
-      type: String, 
-      enum: ['pending', 'approved', 'rejected'], 
-      default: 'pending' 
+    votingStatus: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending'
     },
     mediatorReview: {
       startedAt: Date,
@@ -107,6 +115,14 @@ const RoomSchema = new Schema<IRoom>(
         prize: Number
       }],
       distributed: { type: Boolean, default: false }
+    },
+    room: {
+      game: String,
+      gameMode: String,
+      map: String,
+      maxPlayers: Number,
+      password: { type: String, select: false },
+      isDirect: { type: Boolean, default: false }
     }
   },
   { timestamps: true }

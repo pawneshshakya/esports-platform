@@ -299,6 +299,37 @@ export class EmailService {
 
     return this.sendMail(email, 'Security Alert - Esports Pro', html);
   }
+
+  static async sendEventApproved(email: string, eventTitle: string) {
+    const html = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0f0f0f; color: #ffffff; padding: 40px; border-radius: 16px; border: 1px solid #333;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #a855f7; font-size: 28px; margin: 0;">ESPORTS PRO</h1>
+          <p style="color: #888; margin: 5px 0 0;">Compete. Win. Earn.</p>
+        </div>
+        
+        <h2 style="color: #fff; font-size: 22px; margin-bottom: 10px;">Event Approved! 🚀</h2>
+        <p style="color: #bbb; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+          Great news! Your event <strong style="color: #a855f7;">${eventTitle}</strong> has been approved and is now live for registration.
+        </p>
+        
+        <div style="text-align: center; margin: 35px 0;">
+          <a href="${APP_URL}/events" 
+             style="background: linear-gradient(135deg, #9333ea, #db2777); color: white; padding: 14px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);">
+            View Your Event
+          </a>
+        </div>
+        
+        <div style="border-top: 1px solid #333; margin-top: 35px; padding-top: 20px;">
+          <p style="color: #555; font-size: 12px; line-height: 1.5; text-align: center;">
+            Need help managing your event? Reply to this email.
+          </p>
+        </div>
+      </div>
+    `;
+
+    return this.sendMail(email, `Event Approved: ${eventTitle}`, html);
+  }
 }
 
 export const emailService = EmailService;

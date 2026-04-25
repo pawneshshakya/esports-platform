@@ -36,7 +36,7 @@ export function WithdrawalForm() {
       const formData = new FormData();
       formData.append('amount', form.amount);
       formData.append('method', form.method);
-      
+
       if (form.method === 'upi') {
         formData.append('upiId', form.upiId);
       } else {
@@ -138,7 +138,7 @@ export function WithdrawalForm() {
       {Number(form.amount) > 10000 && (
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
           <label className="block text-sm font-medium text-yellow-500 mb-2">
-            KYC Document Required (> 10,000 tokens)
+            KYC Document Required (&gt; 10000 tokens)
           </label>
           <input
             type="file"

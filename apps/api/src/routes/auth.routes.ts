@@ -5,6 +5,8 @@ import {
   login,
   refreshToken,
   logout,
+  verifyEmail,
+  resendVerification,
 } from "../controllers/auth.controller";
 import { authenticate } from "../middleware/auth.middleware";
 
@@ -19,7 +21,7 @@ const registerValidation = [
   body("name").trim().notEmpty().withMessage("Name is required"),
   body("phone")
     .optional()
-    .isMobilePhone()
+    .isMobilePhone("any")
     .withMessage("Please provide a valid phone number"),
 ];
 
@@ -33,6 +35,8 @@ router.post("/register", registerValidation, register);
 router.post("/login", loginValidation, login);
 router.post("/refresh", refreshToken);
 router.post("/logout", authenticate, logout);
+router.get("/verify-email", verifyEmail);
+router.post("/resend-verification", resendVerification);
 router.get("/me", authenticate, async (req, res) => {
   try {
     const user = await (req as any).user;

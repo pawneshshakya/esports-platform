@@ -70,13 +70,15 @@ export default function WalletOverviewPage() {
         </div>
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {loading ? (
+          {loading && (
             <div className="min-h-[300px] flex items-center justify-center">
               <div className="text-muted-foreground animate-pulse">Loading wallet...</div>
             </div>
-          ) : wallet ? (
-            <>
-              <div className="mb-8 max-w-2xl">
+          )}
+
+          {!loading && wallet && (
+            <div className="space-y-8">
+              <div className="max-w-2xl">
                 <WalletCard compact={false} />
               </div>
 
@@ -111,11 +113,17 @@ export default function WalletOverviewPage() {
                   </div>
                   <TransactionList limit={5} />
                 </div>
-              </>
-          ) : (
+              </div>
+            </div>
+          )}
+
+          {!loading && !wallet && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">Unable to load wallet data</p>
-              <button onClick={() => window.location.reload()} className="bg-primary text-primary-foreground hover:bg-primary/90 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors">
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors"
+              >
                 Retry
               </button>
             </div>

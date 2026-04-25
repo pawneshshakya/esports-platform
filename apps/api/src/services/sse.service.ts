@@ -32,6 +32,10 @@ class SSEService {
       this.pub = new Redis(config.REDIS_URL, redisOptions);
       this.sub = new Redis(config.REDIS_URL, redisOptions);
 
+      // Handle unhandled error events
+      this.pub.on('error', (err) => console.log('⚠️ SSE Redis Pub Error:', err.message));
+      this.sub.on('error', (err) => console.log('⚠️ SSE Redis Sub Error:', err.message));
+
       // Redis se messages subscribe karo (multi-server support)
       this.pub.connect().catch(() => { this.pub = null; });
       this.sub.connect().then(() => {
