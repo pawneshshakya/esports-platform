@@ -1,0 +1,36 @@
+﻿version: '3.8'
+services:
+  api:
+    build: ./apps/api
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/esports
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - ./uploads:/app/uploads
+
+  web:
+    build: ./apps/web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+
+  mongo:
+    image: mongo:6
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongo_data:
